@@ -1,5 +1,30 @@
 package com.tcs.rewardapplicationsys.entity;
 
+import com.tcs.rewardapplicationsys.dto.CustomerType;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
 public class Customer
 {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer customerId;
+    private String firstName;
+    private String lastName;
+    private LocalDate doj;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "cardId")
+    private List<CreditCard> creditCard;
+    private CustomerType customerType;
+    private Boolean isActive;
 }
