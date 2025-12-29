@@ -66,7 +66,15 @@ public class RewardServiceImpl implements RewardService {
             // 5. Generate History & Vouchers (Only happens if Step 4 succeeds)
             String orderId = "ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
-            RedemptionHistory history = new RedemptionHistory(orderId, request.getItemNames(), requiredPoints, LocalDateTime.now(),"SUCCESS");
+            RedemptionHistory history = new RedemptionHistory();
+
+            history.setOrderId(orderId);
+            history.setItemsRedeemed(request.getItemNames());
+            history.setPointsRedeemed(requiredPoints);
+            history.setRedemptionDate(LocalDateTime.now());
+            history.setStatus("SUCCESS");
+            history.setCreditCard(card);
+
             redemptionHistoryRepository.save(history);
 
             return new RedemptionResponse("SUCCESS", orderId, requiredPoints, card.getRewardPoints());
