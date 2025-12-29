@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -24,4 +25,8 @@ public class CreditCard {
     private Double rewardPoints;
     @Version
     private Long version;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "card_id_fk") // This is the column name in the DB
+    private List<RedemptionHistory> redemptionHistory = new ArrayList<>();
+
 }

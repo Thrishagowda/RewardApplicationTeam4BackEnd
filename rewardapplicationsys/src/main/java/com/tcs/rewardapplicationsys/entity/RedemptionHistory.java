@@ -1,9 +1,6 @@
 package com.tcs.rewardapplicationsys.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +14,8 @@ import java.util.List;
 @NoArgsConstructor
 public class RedemptionHistory {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
     private String orderId;
     private List<String> itemsRedeemed;
@@ -24,8 +23,9 @@ public class RedemptionHistory {
     private LocalDateTime redemptionDate;
     private String status;
     @ManyToOne
-    @JoinColumn(name = "card_id")
+    @JoinColumn(name = "card_id_fk", insertable = false, updatable = false)
     private CreditCard creditCard;
+
 
     public RedemptionHistory(String orderId, List<String> itemNames, Double requiredPoints, LocalDateTime now, String success) {
         this.orderId = orderId;

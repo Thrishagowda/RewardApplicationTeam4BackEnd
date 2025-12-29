@@ -42,7 +42,7 @@ public class CustomerServiceImpl implements CustomerService {
             cust.setPhoneNum(customer.getPhoneNum());
         }
         if(Validate.isValidEmail(customer.getEmail())){
-            customer.setEmail(customer.getEmail());
+            cust.setEmail(customer.getEmail());
         }
         // 3. Logic for Premium/Regular status (Threshold: Dec 29, 2022)
         if (cust.getDoj() != null && cust.getDoj().isBefore(LocalDate.now().minusYears(3))) {
