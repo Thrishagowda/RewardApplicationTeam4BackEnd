@@ -71,6 +71,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<Customer> getAllCustomer() throws RewardException {
         List<Customer> customer=customerRepo.findAll();
+        if(customer.isEmpty()){
+            throw new RewardException("Customer Not Found");
+        }
         return customer;
     }
 
