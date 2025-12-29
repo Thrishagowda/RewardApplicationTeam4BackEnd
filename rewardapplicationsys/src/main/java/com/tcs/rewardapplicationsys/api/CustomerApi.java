@@ -43,6 +43,7 @@ public class CustomerApi {
 
     }
 
+
     @GetMapping("/card/{cardNumber}")
     public ResponseEntity<Customer> getCustomerByCardNumber(@PathVariable String cardNumber) throws RewardException {
         Customer cust = customerService.getCustomerByCardNum(cardNumber);
