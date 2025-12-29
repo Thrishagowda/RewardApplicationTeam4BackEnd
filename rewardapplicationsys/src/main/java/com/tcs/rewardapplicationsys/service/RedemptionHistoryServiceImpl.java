@@ -17,9 +17,9 @@ public class RedemptionHistoryServiceImpl implements RedemptionHistoryService {
     RedemptionHistoryRepository redemptionHistoryRepository;
 
     @Override
-    public List<RedemptionHistoryDTO> getHistoryByCard(Long cardId) {
+    public List<RedemptionHistoryDTO> getHistoryByCard(String cardNumber) {
 
-        List<RedemptionHistory> historyList = redemptionHistoryRepository.findByCreditCard_CardIdOrderByRedemptionDateDesc(cardId);
+        List<RedemptionHistory> historyList = redemptionHistoryRepository.findByCreditCardCardNumberOrderByRedemptionDateDesc(cardNumber);
 
         // Convert Entity -> DTO
         return historyList.stream().map(h -> new RedemptionHistoryDTO(

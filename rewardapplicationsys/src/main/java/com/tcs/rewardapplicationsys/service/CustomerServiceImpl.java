@@ -41,7 +41,7 @@ public class CustomerServiceImpl implements CustomerService {
         if(Validate.isValidPhone(num)){
             cust.setPhoneNum(customer.getPhoneNum());
         }
-        if(Validate.isValidEmail(num)){
+        if(Validate.isValidEmail(customer.getEmail())){
             customer.setEmail(customer.getEmail());
         }
         // 3. Logic for Premium/Regular status (Threshold: Dec 29, 2022)

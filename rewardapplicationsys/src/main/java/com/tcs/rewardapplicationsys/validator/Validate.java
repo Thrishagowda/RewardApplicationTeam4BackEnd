@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 public class Validate {
     public static boolean isValidEmail(String email) throws RewardException {
-        String regex = "^[A-Za-z0-9_]+@[A-Za-z0-9_]+\\.[A-Za-z0-9_]+$";
+        String regex = "^[A-Za-z0-9_]+@[A-Za-z0-9_]+(\\.[A-Za-z0-9_]+)+$";
 
         if(Pattern.matches(regex,email))
         {

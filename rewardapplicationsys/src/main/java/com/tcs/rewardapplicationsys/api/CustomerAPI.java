@@ -1,12 +1,11 @@
 package com.tcs.rewardapplicationsys.api;
 
-import com.tcs.rewardapplicationsys.dto.CreditCardDTO;
-import com.tcs.rewardapplicationsys.dto.CustomerDTO;
-import com.tcs.rewardapplicationsys.dto.RedemptionHistoryDTO;
+import com.tcs.rewardapplicationsys.dto.*;
 import com.tcs.rewardapplicationsys.entity.Customer;
 import com.tcs.rewardapplicationsys.exception.RewardException;
 import com.tcs.rewardapplicationsys.service.CustomerService;
 import com.tcs.rewardapplicationsys.service.RedemptionHistoryService;
+import com.tcs.rewardapplicationsys.service.RewardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -22,18 +21,33 @@ public class CustomerAPI {
     CustomerService customerService;
     @Autowired
     Environment env;
-
     @Autowired
     RedemptionHistoryService redemptionHistoryService;
+    @Autowired
+    RewardService rewardService;
 
-    @GetMapping("/customers/{customerId}/cards/{cardId}/redemptions/history")
+    @GetMapping("/customers/{customerId}/cards/{cardNumber}/redemptions/history")
     public ResponseEntity<List<RedemptionHistoryDTO>> getRedemptionHistory(
             @PathVariable Long customerId,
-            @PathVariable Long cardId) {
+            @PathVariable String cardNumber) {
 
-        System.out.println("Fetching history for Card ID: " + cardId);
-        var history = redemptionHistoryService.getHistoryByCard(cardId);
+        System.out.println("Fetching history for Card Number: " + cardNumber);
+        List<RedemptionHistoryDTO> history = redemptionHistoryService.getHistoryByCard(cardNumber);
         return ResponseEntity.ok(history);
+    }
+
+    @PostMapping("/customers/{customerId}/cards/{cardNumber}/redemptions")
+    public ResponseEntity<RedemptionResponse> redeemPoints(
+            @PathVariable Long customerId,
+            @PathVariable String cardNumber,
+            @RequestBody RedemptionRequest request) throws RewardException {
+
+        System.out.println("Processing Redemption for Card ID: " + cardNumber);
+
+        // Call the service to deduct points and save history
+        RedemptionResponse response = rewardService.redeemPoints(cardNumber, request);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/add")

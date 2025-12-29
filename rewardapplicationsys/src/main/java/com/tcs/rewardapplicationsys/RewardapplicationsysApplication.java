@@ -12,8 +12,6 @@ import java.util.Arrays;
 @SpringBootApplication
 public class RewardapplicationsysApplication {
 
-	@Autowired
-	RewardItemRepository rewardItemRepository;
 	public static void main(String[] args) {
 		SpringApplication.run(RewardapplicationsysApplication.class, args);
 	}

@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface TransactionService {
-    List<Transaction> generateMockTransactionsForCard(Long cardId, int count) throws RewardException;
+    List<Transaction> generateMockTransactionsForCard(String cardNumber, int count) throws RewardException;
 
     Map<String, Object> processTransactions(List<String> transactionIds);
 }

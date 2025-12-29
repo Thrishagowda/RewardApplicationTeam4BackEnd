@@ -3,17 +3,19 @@ package com.tcs.rewardapplicationsys.service;
 import com.tcs.rewardapplicationsys.dto.RedemptionRequest;
 import com.tcs.rewardapplicationsys.dto.RedemptionResponse;
 import com.tcs.rewardapplicationsys.entity.CreditCard;
+import com.tcs.rewardapplicationsys.entity.RedemptionHistory;
 import com.tcs.rewardapplicationsys.entity.RewardItem;
 import com.tcs.rewardapplicationsys.exception.RewardException;
-import com.tcs.rewardapplicationsys.repository.CreditCardRepository;
+import com.tcs.rewardapplicationsys.repository.CreditCardRepo;
+import com.tcs.rewardapplicationsys.repository.RedemptionHistoryRepository;
 import com.tcs.rewardapplicationsys.repository.RewardItemRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -23,7 +25,10 @@ public class RewardServiceImpl implements RewardService {
     RewardItemRepository rewardItemRepository;
 
     @Autowired
-    CreditCardRepository creditCardRepository;
+    CreditCardRepo creditCardRepository;
+
+    @Autowired
+    RedemptionHistoryRepository redemptionHistoryRepository;
 
     @Override
     public List<RewardItem> getAllRewards() {
@@ -35,11 +40,14 @@ public class RewardServiceImpl implements RewardService {
 //        return rewardItemRepository.findByCategory(category);
 //    }
 
-    public RedemptionResponse redeemPoints(Long cardId, RedemptionRequest request) throws RewardException {
+    @Override
+    public RedemptionResponse redeemPoints(String cardNumber, RedemptionRequest request) throws RewardException {
         try {
             // 1. Fetch Card (now includes version)
-            CreditCard card = creditCardRepository.findById(cardId)
-                    .orElseThrow(() -> new RewardException("Card not found"));
+            CreditCard card = creditCardRepository.findByCardNumber(cardNumber);
+            if(card == null){
+                throw new RewardException("Credit Card not found with ID: " + cardNumber);
+            }
 
             Double currentBalance = card.getRewardPoints() != null ? card.getRewardPoints() : 0.0;
             Double requiredPoints = request.getTotalPoints();
@@ -58,12 +66,12 @@ public class RewardServiceImpl implements RewardService {
             // 5. Generate History & Vouchers (Only happens if Step 4 succeeds)
             String orderId = "ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
-//            RedemptionHistory history = new RedemptionHistory(orderId, card, requiredPoints, String.join(", ", request.getItemNames()));
-//            historyRepository.save(history);
+            RedemptionHistory history = new RedemptionHistory(orderId, request.getItemNames(), requiredPoints, LocalDateTime.now(),"SUCCESS");
+            redemptionHistoryRepository.save(history);
 
             return new RedemptionResponse("SUCCESS", orderId, requiredPoints, card.getRewardPoints());
 
-        } catch (OptimisticLockingFailureException | RewardException e) {
+        } catch (OptimisticLockingFailureException e) {
             // Handle the Race Condition gracefully
             throw new RewardException("Transaction conflict! Please try redeeming again.");
         }
