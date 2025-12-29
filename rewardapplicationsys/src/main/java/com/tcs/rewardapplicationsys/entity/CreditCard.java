@@ -18,7 +18,7 @@ public class CreditCard {
     @Column(unique = true, nullable = false)
     private String cardNumber;
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "transactionId")
+    @JoinColumn(name = "card_id_fk")
     private List<Transaction> transaction;
     private Boolean isCardActive;
     private Double rewardPoints;
