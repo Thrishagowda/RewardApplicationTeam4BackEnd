@@ -13,12 +13,13 @@ import java.time.LocalDateTime;
 @Entity
 public class Transaction {
     @Id
-    private String transactionId;
+
+    private Long transactionId;
     private String item;
     private Double amount;
     private LocalDateTime TransactionDate;
     private Boolean isProcessed;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cardNumber")
-    private CreditCard creditCard;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    @JoinColumn(name = "cardNumber")
+//    private CreditCard creditCard;
 }

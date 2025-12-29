@@ -13,14 +13,16 @@ import java.util.List;
 @Entity
 public class CreditCard {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long cardId;
     @Column(unique=true, nullable=false)
     private String cardNumber;
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "transactionId")
+    @JoinColumn(name = "card_id_fk")
     private List<Transaction> transaction;
     private Boolean isCardActive;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="customerId")
+    @ManyToOne
+    @JoinColumn(name = "cust_id_fk", insertable = false, updatable = false)
     private Customer customer;
     private Double rewardPoints;
 }

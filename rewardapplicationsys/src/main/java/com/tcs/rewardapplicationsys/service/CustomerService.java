@@ -7,7 +7,7 @@ import com.tcs.rewardapplicationsys.exception.RewardException;
 import java.util.List;
 
 public interface CustomerService {
-void addCustomer(CustomerDTO customer) throws RewardException;
+Integer addCustomer(CustomerDTO customer) throws RewardException;
 Integer deleteCustomer(Integer custId) throws RewardException;
     public List<Customer> GetCustomerBycustId(Integer custId) throws RewardException;
     public List<Customer> getCustomerByCardNum(String creditNumber) throws RewardException ;
