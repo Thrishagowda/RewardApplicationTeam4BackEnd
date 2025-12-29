@@ -30,4 +30,5 @@ public class Customer
     private CustomerType customerType;
     @Column(name = "is_active")
     private Boolean isActive;
+
 }
