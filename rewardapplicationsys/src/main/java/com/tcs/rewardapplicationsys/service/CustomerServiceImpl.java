@@ -68,7 +68,11 @@ public class CustomerServiceImpl implements CustomerService {
         }
     }
 
-
+    @Override
+    public List<Customer> getAllCustomer() throws RewardException {
+        List<Customer> customer=customerRepo.findAll();
+        return customer;
+    }
 
 
 }

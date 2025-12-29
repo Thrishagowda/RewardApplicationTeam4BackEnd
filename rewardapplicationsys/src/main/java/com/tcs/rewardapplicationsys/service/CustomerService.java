@@ -11,5 +11,5 @@ void addCustomer(CustomerDTO customer) throws RewardException;
 Integer deleteCustomer(Integer custId) throws RewardException;
     public List<Customer> GetCustomerBycustId(Integer custId) throws RewardException;
     public List<Customer> getCustomerByCardNum(String creditNumber) throws RewardException ;
-
+    public List<Customer> getAllCustomer() throws RewardException ;
     }
