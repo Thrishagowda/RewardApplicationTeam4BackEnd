@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CesUserDTO {
     private Long id;
-    private String username;
+    private String userName;
     private String password;
 }
