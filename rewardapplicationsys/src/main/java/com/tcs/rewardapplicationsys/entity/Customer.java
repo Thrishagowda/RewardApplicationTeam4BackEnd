@@ -23,7 +23,7 @@ public class Customer
     private LocalDate doj;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "cardId")
+    @JoinColumn(name = "cust_id_fk")
     private List<CreditCard> creditCard;
     private CustomerType customerType;
     private Boolean isActive;
