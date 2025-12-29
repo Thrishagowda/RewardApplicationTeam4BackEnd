@@ -18,7 +18,7 @@ public class Transaction {
     private Double amount;
     private LocalDateTime TransactionDate;
     private String status;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cardNumber")
     private CreditCard creditCard;
 }

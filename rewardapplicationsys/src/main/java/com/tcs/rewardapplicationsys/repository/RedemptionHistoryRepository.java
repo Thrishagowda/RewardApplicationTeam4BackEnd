@@ -9,5 +9,5 @@ import java.util.List;
 @Repository
 public interface RedemptionHistoryRepository extends JpaRepository<RedemptionHistory, Long> {
 
-    List<RedemptionHistory> findByCreditCard_CardIdOrderByRedemptionDateDesc(Long cardId);
+    List<RedemptionHistory> findByCreditCardCardNumberOrderByRedemptionDateDesc(String cardNumber);
 }

@@ -4,7 +4,8 @@ import com.tcs.rewardapplicationsys.entity.CreditCard;
 import com.tcs.rewardapplicationsys.entity.Customer;
 import com.tcs.rewardapplicationsys.entity.Transaction;
 import com.tcs.rewardapplicationsys.exception.RewardException;
-import com.tcs.rewardapplicationsys.repository.CreditCardRepository;
+import com.tcs.rewardapplicationsys.repository.CreditCardRepo;
+import com.tcs.rewardapplicationsys.repository.CustomerRepo;
 import com.tcs.rewardapplicationsys.repository.TransactionRepository;
 import com.tcs.rewardapplicationsys.utility.DataHelper;
 import jakarta.transaction.Transactional;
@@ -18,17 +19,22 @@ import java.util.*;
 public class TransactionServiceImpl implements TransactionService {
 
     @Autowired
-    CreditCardRepository creditCardRepository;
+    CreditCardRepo creditCardRepository;
+
+    @Autowired
+    CustomerRepo cust;
 
     @Autowired
     TransactionRepository transactionRepository;
 
     @Override
-    public List<Transaction> generateMockTransactionsForCard(Long cardId, int count) throws RewardException {
+    public List<Transaction> generateMockTransactionsForCard(String cardNumber, int count) throws RewardException {
 
        // 1. Fetch the actual Credit Card entity from DB
-        CreditCard card = creditCardRepository.findById(cardId)
-                .orElseThrow(() -> new RewardException("Credit Card not found with ID: " + cardId));
+        CreditCard card = creditCardRepository.findByCardNumber(cardNumber);
+        if(card == null){
+            throw new RewardException("Credit Card not found with ID: " + cardNumber);
+        }
 
         List<Transaction> mockTransactions = new ArrayList<>();
 
@@ -50,7 +56,7 @@ public class TransactionServiceImpl implements TransactionService {
             mockTransactions.add(txn);
 
         }
-        return mockTransactions;
+        return transactionRepository.saveAll(mockTransactions);
     }
 
     @Override
@@ -65,7 +71,7 @@ public class TransactionServiceImpl implements TransactionService {
             if ("PENDING".equalsIgnoreCase(txn.getStatus())) {
 
                 CreditCard card = txn.getCreditCard();
-                Customer customer = creditCardRepository.findByCreditCardCardNumber(card.getCardNumber()); // Assuming correct mapping
+                Customer customer = cust.findByCreditCardCardNumber(card.getCardNumber()); // Assuming correct mapping
 
                 // 1. Determine Customer Type (Premium Logic)
                 boolean isPremium = DataHelper.isPremiumCustomer(customer.getDoj()); // DOJ = Date of Joining
