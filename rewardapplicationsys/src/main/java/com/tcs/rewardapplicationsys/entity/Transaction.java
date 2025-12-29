@@ -17,7 +17,7 @@ public class Transaction {
     private String item;
     private Double amount;
     private LocalDateTime TransactionDate;
-    private Boolean isProcessed;
+    private String status;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cardNumber")
     private CreditCard creditCard;

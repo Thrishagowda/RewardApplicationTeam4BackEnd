@@ -7,6 +7,6 @@ public class TransactionDTO {
     private String item;
     private Double amount;
     private LocalDateTime TransactionDate;
-    private Boolean isProcessed;
+    private String status;
     private CreditCardDTO creditCard;
 }
