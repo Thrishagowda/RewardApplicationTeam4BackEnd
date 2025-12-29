@@ -21,10 +21,13 @@ public class Customer
     private String firstName;
     private String lastName;
     private LocalDate doj;
-
+    private String email;
+    private Long phoneNum;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "cust_id_fk")
     private List<CreditCard> creditCard;
+    @Enumerated(EnumType.STRING)
     private CustomerType customerType;
+    @Column(name = "is_active")
     private Boolean isActive;
 }

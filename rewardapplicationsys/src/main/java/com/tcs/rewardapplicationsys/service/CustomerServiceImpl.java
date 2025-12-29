@@ -8,6 +8,7 @@ import com.tcs.rewardapplicationsys.entity.Customer;
 import com.tcs.rewardapplicationsys.exception.RewardException;
 import com.tcs.rewardapplicationsys.repository.CreditCardRepo;
 import com.tcs.rewardapplicationsys.repository.CustomerRepo;
+import com.tcs.rewardapplicationsys.validator.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,13 @@ public class CustomerServiceImpl implements CustomerService {
         cust.setDoj(customer.getDoj());
         cust.setFirstName(customer.getFirstName());
         cust.setLastName(customer.getLastName());
-
+        String num= String.valueOf(customer.getPhoneNum());
+        if(Validate.isValidPhone(num)){
+            cust.setPhoneNum(customer.getPhoneNum());
+        }
+        if(Validate.isValidEmail(num)){
+            customer.setEmail(customer.getEmail());
+        }
         // 3. Logic for Premium/Regular status (Threshold: Dec 29, 2022)
         if (cust.getDoj() != null && cust.getDoj().isBefore(LocalDate.now().minusYears(3))) {
             cust.setCustomerType(CustomerType.PREMIUM);
@@ -100,7 +107,10 @@ public class CustomerServiceImpl implements CustomerService {
     public Integer addCreditCardToCustomer(Integer customerId, CreditCardDTO cardDto) throws RewardException {
         Customer customer=customerRepo.findById(customerId).orElseThrow(() -> new RewardException("Customer Not Found"));
         CreditCard card=new CreditCard();
-        card.setCardNumber( cardDto.getCardNumber());
+        if(Validate.isValidCardNumber(cardDto.getCardNumber())){
+            card.setCardNumber( cardDto.getCardNumber());
+        }
+
         card.setRewardPoints(0.0);
         card.setIsCardActive(true);
 //        card.setCustomer( customer );
