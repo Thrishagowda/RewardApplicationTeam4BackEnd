@@ -21,8 +21,8 @@ public class CreditCard {
     @JoinColumn(name = "card_id_fk")
     private List<Transaction> transaction;
     private Boolean isCardActive;
-    @ManyToOne
-    @JoinColumn(name = "cust_id_fk", insertable = false, updatable = false)
-    private Customer customer;
+//    @ManyToOne
+//    @JoinColumn(name = "cust_id_fk", insertable = false, updatable = false)
+//    private Customer customer;
     private Double rewardPoints;
 }
