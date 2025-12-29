@@ -1,10 +1,14 @@
 package com.tcs.rewardapplicationsys.service;
 
+import com.tcs.rewardapplicationsys.dto.CreditCardDTO;
 import com.tcs.rewardapplicationsys.dto.CustomerDTO;
 import com.tcs.rewardapplicationsys.dto.CustomerType;
+import com.tcs.rewardapplicationsys.entity.CreditCard;
 import com.tcs.rewardapplicationsys.entity.Customer;
 import com.tcs.rewardapplicationsys.exception.RewardException;
+import com.tcs.rewardapplicationsys.repository.CreditCardRepo;
 import com.tcs.rewardapplicationsys.repository.CustomerRepo;
+import com.tcs.rewardapplicationsys.validator.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +37,13 @@ public class CustomerServiceImpl implements CustomerService {
         cust.setDoj(customer.getDoj());
         cust.setFirstName(customer.getFirstName());
         cust.setLastName(customer.getLastName());
-
+        String num= String.valueOf(customer.getPhoneNum());
+        if(Validate.isValidPhone(num)){
+            cust.setPhoneNum(customer.getPhoneNum());
+        }
+        if(Validate.isValidEmail(num)){
+            customer.setEmail(customer.getEmail());
+        }
         // 3. Logic for Premium/Regular status (Threshold: Dec 29, 2022)
         if (cust.getDoj() != null && cust.getDoj().isBefore(LocalDate.now().minusYears(3))) {
             cust.setCustomerType(CustomerType.PREMIUM);
@@ -61,22 +71,22 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<Customer> GetCustomerBycustId(Integer custId) throws RewardException {
+    public Customer GetCustomerBycustId(Integer custId) throws RewardException {
         Optional<Customer> cust=customerRepo.findById(custId);
 
         if(cust.isEmpty()){
             throw new RewardException("Customer Not Found");
         }
         else{
-            return Collections.singletonList(cust.get());
+            return cust.get();
 
         }
     }
 
     @Override
-    public List<Customer> getCustomerByCardNum(String cardNumber) throws RewardException {
-        List<Customer> customer = customerRepo.findByCreditCardCardNumber(cardNumber);
-        if(customer.isEmpty()){
+    public Customer getCustomerByCardNum(String cardNumber) throws RewardException {
+        Customer customer = customerRepo.findByCreditCardCardNumber(cardNumber);
+        if(customer==null){
             throw new RewardException("Customer Not Found");
         }
         else{
@@ -93,5 +103,39 @@ public class CustomerServiceImpl implements CustomerService {
         return customer;
     }
 
+    @Override
+    public Integer addCreditCardToCustomer(Integer customerId, CreditCardDTO cardDto) throws RewardException {
+        Customer customer=customerRepo.findById(customerId).orElseThrow(() -> new RewardException("Customer Not Found"));
+        CreditCard card=new CreditCard();
+        if(Validate.isValidCardNumber(cardDto.getCardNumber())){
+            card.setCardNumber( cardDto.getCardNumber());
+        }
 
-}
+        card.setRewardPoints(0.0);
+        card.setIsCardActive(true);
+//        card.setCustomer( customer );
+        customer.getCreditCard().add(card);
+        customerRepo.save(customer);
+        return customer.getCustomerId();
+
+    }
+    @Autowired
+    CreditCardRepo creditCardRepo;
+    @Override
+    public String deleteCreditCardFromCustomer(String creditCardNum) throws RewardException {
+        Customer customer1=customerRepo.findByCreditCardCardNumber(creditCardNum);
+            if(customer1==null){
+                throw new RewardException("There is no Customer with given card number");
+
+            }
+            else{
+               CreditCard card=creditCardRepo.findByCardNumber(creditCardNum);
+               card.setIsCardActive(false);
+               creditCardRepo.save(card);
+            }
+           return creditCardNum;
+        }
+    }
+
+
+

@@ -1,5 +1,6 @@
 package com.tcs.rewardapplicationsys.api;
 
+import com.tcs.rewardapplicationsys.dto.CreditCardDTO;
 import com.tcs.rewardapplicationsys.dto.CustomerDTO;
 import com.tcs.rewardapplicationsys.entity.Customer;
 import com.tcs.rewardapplicationsys.exception.RewardException;
@@ -36,15 +37,16 @@ public class CustomerApi {
     }
 
     @GetMapping("/{custId}")
-    public ResponseEntity<List<Customer>> getCustomers(@PathVariable Integer custId) throws RewardException {
-        List<Customer> Cust = customerService.GetCustomerBycustId(custId);
+    public ResponseEntity<Customer> getCustomers(@PathVariable Integer custId) throws RewardException {
+        Customer Cust = customerService.GetCustomerBycustId(custId);
         return new ResponseEntity<>(Cust, HttpStatus.OK);
 
     }
 
+
     @GetMapping("/card/{cardNumber}")
-    public ResponseEntity<List<Customer>> getCustomerByCardNumber(@PathVariable String cardNumber) throws RewardException {
-        List<Customer> cust = customerService.getCustomerByCardNum(cardNumber);
+    public ResponseEntity<Customer> getCustomerByCardNumber(@PathVariable String cardNumber) throws RewardException {
+        Customer cust = customerService.getCustomerByCardNum(cardNumber);
         return new ResponseEntity<>(cust, HttpStatus.OK);
     }
     @GetMapping("/allCustomer")
@@ -52,6 +54,21 @@ public class CustomerApi {
         List<Customer> Cust = customerService.getAllCustomer();
         return new ResponseEntity<>(Cust, HttpStatus.OK);
     }
+
+
+    //creditcard
+    @PostMapping("/{customerId}/cards")
+    public ResponseEntity<String> addCard(@PathVariable Integer customerId, @RequestBody CreditCardDTO cardDto) throws RewardException {
+        customerService.addCreditCardToCustomer(customerId, cardDto);
+        return new ResponseEntity<>("Card added successfully", HttpStatus.CREATED);
+    }
+
+    @PutMapping("/delete/{cardNumber}")
+    public ResponseEntity<String> deleteCard(@PathVariable String cardNumber) throws RewardException {
+        String cn=customerService.deleteCreditCardFromCustomer(cardNumber);
+        return new ResponseEntity<>("Card deleted successfully", HttpStatus.OK);
+    }
+
 }
 
 
