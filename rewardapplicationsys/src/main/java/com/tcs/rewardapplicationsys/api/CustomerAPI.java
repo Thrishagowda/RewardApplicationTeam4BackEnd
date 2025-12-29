@@ -2,9 +2,11 @@ package com.tcs.rewardapplicationsys.api;
 
 import com.tcs.rewardapplicationsys.dto.CreditCardDTO;
 import com.tcs.rewardapplicationsys.dto.CustomerDTO;
+import com.tcs.rewardapplicationsys.dto.RedemptionHistoryDTO;
 import com.tcs.rewardapplicationsys.entity.Customer;
 import com.tcs.rewardapplicationsys.exception.RewardException;
 import com.tcs.rewardapplicationsys.service.CustomerService;
+import com.tcs.rewardapplicationsys.service.RedemptionHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,19 @@ public class CustomerAPI {
     CustomerService customerService;
     @Autowired
     Environment env;
+
+    @Autowired
+    RedemptionHistoryService redemptionHistoryService;
+
+    @GetMapping("/customers/{customerId}/cards/{cardId}/redemptions/history")
+    public ResponseEntity<List<RedemptionHistoryDTO>> getRedemptionHistory(
+            @PathVariable Long customerId,
+            @PathVariable Long cardId) {
+
+        System.out.println("Fetching history for Card ID: " + cardId);
+        var history = redemptionHistoryService.getHistoryByCard(cardId);
+        return ResponseEntity.ok(history);
+    }
 
     @PostMapping("/add")
     public ResponseEntity<String> addCustomer(@RequestBody CustomerDTO customer) throws RewardException {

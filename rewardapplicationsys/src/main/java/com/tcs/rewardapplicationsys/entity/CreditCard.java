@@ -15,14 +15,13 @@ public class CreditCard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cardId;
-    @Column(unique=true, nullable=false)
+    @Column(unique = true, nullable = false)
     private String cardNumber;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "card_id_fk")
     private List<Transaction> transaction;
     private Boolean isCardActive;
-//    @ManyToOne
-//    @JoinColumn(name = "cust_id_fk", insertable = false, updatable = false)
-//    private Customer customer;
     private Double rewardPoints;
+    @Version
+    private Long version;
 }
