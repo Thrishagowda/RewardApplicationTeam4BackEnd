@@ -10,5 +10,6 @@ public class RedemptionHistory {
     private String itemsRedeemed;
     private Double pointsRedeemed;
     private LocalDateTime redemptionDate;
-    private String status;
+
+
 }
