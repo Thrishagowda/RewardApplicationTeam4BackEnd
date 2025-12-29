@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 public class CreditCard {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique=true, nullable=false)
     private String cardNumber;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "transactionId")

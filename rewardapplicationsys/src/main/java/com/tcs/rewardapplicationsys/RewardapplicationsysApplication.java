@@ -1,5 +1,7 @@
 package com.tcs.rewardapplicationsys;
 
+import com.tcs.rewardapplicationsys.entity.Customer;
+import com.tcs.rewardapplicationsys.exception.RewardException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
