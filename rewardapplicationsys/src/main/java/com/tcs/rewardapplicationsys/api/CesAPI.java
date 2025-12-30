@@ -12,29 +12,45 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/v1/user")
+@CrossOrigin(origins = "http://localhost:4200")
 public class CesAPI {
+
     @Autowired
     CesService cesService;
-    @Autowired
 
-    Environment env;
+    // LOGIN ENDPOINT (Public)
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody CesUserDTO loginDto) throws RewardException {
+        String token = cesService.login(loginDto.getUserName(), loginDto.getPassword());
+        Map<String, String> response = new HashMap<>();
+        response.put("token", token);
+        return ResponseEntity.ok(response);
+    }
+
+    // Inside CesAPI class
+    @GetMapping("/all")
+    public ResponseEntity<List<CesUser>> getAllUsers() {
+        return ResponseEntity.ok(cesService.getAllUsers());
+    }
+
+    // ADD USER (Restricted to ADMIN by SecurityConfig)
     @PostMapping("/add")
     public ResponseEntity<String> addUser(@RequestBody CesUserDTO cesUser) throws RewardException {
-        // Call the service once and capture the return message (e.g., "User added with ID: 101")
         cesService.addCesUser(cesUser);
-        String message=env.getProperty("API.User.Added");
-
-        // Return the response with a 201 Created status
-        return new ResponseEntity<>(message, HttpStatus.CREATED);
+        return new ResponseEntity<>("Sub-CES User created successfully", HttpStatus.CREATED);
     }
-    @DeleteMapping("/user/{username}")
+
+    // DELETE USER (Restricted to ADMIN by SecurityConfig)
+    @DeleteMapping("/delete/{username}")
     public ResponseEntity<String> deleteUser(@PathVariable String username) throws RewardException {
         String message = cesService.deleteByUserName(username);
         return ResponseEntity.ok(message);
     }
-
-
 }
