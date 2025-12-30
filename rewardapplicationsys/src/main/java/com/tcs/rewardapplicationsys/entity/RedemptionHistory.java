@@ -1,14 +1,14 @@
 package com.tcs.rewardapplicationsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,12 +18,14 @@ public class RedemptionHistory {
 
     private Long id;
     private String orderId;
+    @ElementCollection
     private List<String> itemsRedeemed;
     private Double pointsRedeemed;
     private LocalDateTime redemptionDate;
     private String status;
     @ManyToOne
     @JoinColumn(name = "card_id_fk", insertable = false, updatable = false)
+    @JsonIgnore
     private CreditCard creditCard;
 
 
