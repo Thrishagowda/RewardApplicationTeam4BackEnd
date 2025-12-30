@@ -1,5 +1,6 @@
 package com.tcs.rewardapplicationsys.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tcs.rewardapplicationsys.dto.CustomerType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -26,6 +27,7 @@ public class Customer
     private Long phoneNum;
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "cust_id_fk")
+    @JsonManagedReference
     private List<CreditCard> creditCard;
     @Enumerated(EnumType.STRING)
     private CustomerType customerType;

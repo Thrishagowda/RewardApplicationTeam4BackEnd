@@ -45,14 +45,9 @@ public class SecurityConfig {
 
                 // 3. Define Access Rules
                 .authorizeHttpRequests(auth -> auth
-                        // Allow Login and H2 Console (if you use it)
                         .requestMatchers("/api/v1/user/login").permitAll()
-
-                        // RESTRICT Admin Actions
                         .requestMatchers("/api/v1/user/add", "/api/v1/user/delete/**").hasAuthority("ADMIN")
-
-                        // All other URLs require a logged-in user
-                        .anyRequest().authenticated()
+                        .anyRequest().authenticated() // <--- This allows /api/v1/allCustomer if logged in
                 )
 
                 // 4. Stateless Session (No server-side session storage)
