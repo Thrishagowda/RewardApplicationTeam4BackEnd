@@ -5,33 +5,63 @@ import com.tcs.rewardapplicationsys.dto.UserRole;
 import com.tcs.rewardapplicationsys.entity.CesUser;
 import com.tcs.rewardapplicationsys.exception.RewardException;
 import com.tcs.rewardapplicationsys.repository.CesUserRepo;
+import com.tcs.rewardapplicationsys.security.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
 public class CesServiceImpl implements CesService {
-    // Logic: Admin adding a CES User
+
     @Autowired
     CesUserRepo userRepo;
-    public void addCesUser(CesUserDTO dto) {
+
+    @Autowired
+    PasswordEncoder passwordEncoder; // Inject BCrypt encoder
+
+    @Autowired
+    JwtUtils jwtUtils;
+
+    // 1. Login Logic
+    @Override
+    public String login(String username, String rawPassword) throws RewardException {
+        CesUser user = userRepo.findByUserName(username);
+        if (user != null && passwordEncoder.matches(rawPassword, user.getPassword())) {
+            // Password matches! Generate Token
+            return jwtUtils.generateToken(user.getUserName(), user.getRole().name());
+        }
+        throw new RewardException("Invalid Username or Password");
+    }
+
+    // 2. Add User (Only Admin can call this via Controller)
+    public void addCesUser(CesUserDTO dto) throws RewardException {
+        if(userRepo.findByUserName(dto.getUserName()) != null) {
+            throw new RewardException("Username already exists");
+        }
+
         CesUser user = new CesUser();
         user.setUserName(dto.getUserName());
-        user.setPassword(dto.getPassword());
-        // Using the Enum ensures only valid roles can be assigned
-        user.setRole(UserRole.CES_USER);
+        // ENCRYPT PASSWORD BEFORE SAVING
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setRole(UserRole.CES_USER); // Default to Sub-User
 
         userRepo.save(user);
     }
 
+    // Inside CesServiceImpl class
     @Override
-    @Transactional
-    public String deleteByUserName(String username) throws RewardException {
-        // 1. Fetch the user
-        CesUser user = userRepo.findByUserName(username);
+    public List<CesUser> getAllUsers() {
+        return userRepo.findAll();
+    }
 
-        // 2. Logic Check: Must exist and must NOT be an Admin
+    // 3. Delete User
+    @Override
+    public String deleteByUserName(String username) throws RewardException {
+        CesUser user = userRepo.findByUserName(username);
         if (user != null) {
             if (user.getRole() == UserRole.CES_USER) {
                 userRepo.delete(user);
@@ -40,11 +70,9 @@ public class CesServiceImpl implements CesService {
                 throw new RewardException("Administrator accounts cannot be deleted.");
             }
         } else {
-            throw new RewardException("User not found with username: " + username);
+            throw new RewardException("User not found: " + username);
         }
     }
-
-
 }
 
 
